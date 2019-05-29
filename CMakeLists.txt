@@ -1,7 +1,11 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
 
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
+
 SET(PROJECTNAME keywordSpotter)
 PROJECT(${PROJECTNAME})
+
+FIND_PACKAGE(SNDFILE REQUIRED)
 
 SET(PROJECT_INCLUDE_DIRS
   ${PROJECT_SOURCE_DIR}/include)
@@ -24,13 +28,13 @@ SOURCE_GROUP("Source Files" FILES ${folder_source})
 SOURCE_GROUP("Header Files" FILES ${folder_header})
 
 # Add our include files into our compiler's search path.
-INCLUDE_DIRECTORIES(${PROJECT_SOURCE_DIR}/include)
+INCLUDE_DIRECTORIES(${PROJECT_SOURCE_DIR}/include ${SNDFILE_INCLUDE_DIR})
 
 # Create everything needed to build our library
 #ADD_LIBRARY(${PROJECTNAME} ${folder_source} ${folder_header})
 
 ADD_EXECUTABLE(${PROJECTNAME} ${folder_source} ${folder_header})
 
-TARGET_LINK_LIBRARIES(${PROJECTNAME})
+TARGET_LINK_LIBRARIES(${PROJECTNAME} ${SNDFILE_LIBRARY})
 
 
