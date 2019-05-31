@@ -13,12 +13,16 @@ SET(PROJECT_INCLUDE_DIRS
 # Find .cpp and .h files automatically.  This is a bit lazy,
 # and in principle it would be better to list these files manually.
 SET(folder_source 
+  ./src/sound/Sound.cpp
+  ./src/utils/WavUtils.cpp
   ./src/EmbeddingNetwork.cpp
   ./src/main.cpp
 )
 
 SET(folder_header 
   ./include/keywordSpotter/EmbeddingNetwork.h
+  ./include/keywordSpotter/sound/Sound.h
+  ./include/keywordSpotter/utils/WavUtils.h
 )
 
 MESSAGE("folder_header ${folder_header}")
