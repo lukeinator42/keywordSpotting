@@ -20,14 +20,17 @@ class Spectrogram {
     int nFFT;
     int windowLen;
     int hopSize;
+    double minFreq;
+    double maxFreq;
     bool logScale;
+
 
   public:
 
 	/* ===========================================================================
 	 *  Default Constructor.
      */
-	Spectrogram(int nFFT=128, int windowLen=400, int hopSize=160, bool logScale=true);
+	Spectrogram(int nFFT=128, int windowLen=400, int hopSize=160, int minFreq=300.0, int maxFreq=8000.0, bool logScale=true);
 
 
     /* ===========================================================================
