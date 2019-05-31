@@ -16,6 +16,7 @@ SET(folder_source
   ./src/sound/Sound.cpp
   ./src/utils/WavUtils.cpp
   ./src/EmbeddingNetwork.cpp
+  ./src/features/Spectrogram.cpp
   ./src/main.cpp
 )
 
@@ -23,6 +24,7 @@ SET(folder_header
   ./include/keywordSpotter/EmbeddingNetwork.h
   ./include/keywordSpotter/sound/Sound.h
   ./include/keywordSpotter/utils/WavUtils.h
+  ./include/keywordSpotter/features/Spectrogram.h
 )
 
 MESSAGE("folder_header ${folder_header}")

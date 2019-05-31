@@ -29,10 +29,7 @@ int main(int argc, char ** argv) {
 
     cout << buffer.size() << endl;
 
-    // for(int i=0; i<buffer.size(); i++)
-    //     cout << i << " " << buffer.getSample(i) << " ";
-
-    // cout << endl;
+    
 
     
     return 0;
