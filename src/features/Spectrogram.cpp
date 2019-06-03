@@ -1,13 +1,61 @@
 #include <keywordSpotter/features/Spectrogram.h>
-#include <cmath>
+#include <keywordSpotter/features/FftRealPair.h>
 
 Spectrogram::Spectrogram(int nFFT, int windowLen, int hopSize, double minFreq, double maxFreq, int sampleRate, bool logScale)
 : nFFT(nFFT), windowLen(windowLen), hopSize(hopSize), minFreq(minFreq), maxFreq(maxFreq), sampleRate(sampleRate), logScale(logScale) {
+    
     initFFTCenterBins();
+    initFilterbank();
 }
 
 Spectrogram::~Spectrogram() {
     
+}
+
+std::vector< std::vector<double> > Spectrogram::computeSpectrogram(std::vector<double> audio) {
+    while(audio.size() % windowLen != hopSize)
+        audio.push_back(0);
+
+    std::vector< std::vector<double> > spectrogram;
+
+    for(int i=0; i<audio.size(); i += hopSize) {
+        //get subsection of audio
+        std::vector<double> subvec(audio.begin()+i, audio.begin()+i+hopSize);
+
+        //hanning window section
+        hann(subvec);
+
+        //create complex array
+        std::vector<double> comp;
+        comp.resize(subvec.size());
+
+        //do fft
+        Fft::transform(subvec, comp);
+
+        //absolute val of fft
+        std::vector<double> fftRes = fftAbs(subvec, comp);
+
+        //create spectrogram col
+        std::vector<double> spectrogramCol;
+        spectrogramCol.resize(nFFT);
+
+        //filter based on filterbank
+        for(int j=0; j<nFFT; j++) {
+            spectrogramCol[j] = 0;
+
+            for(int k=0; k< windowLen/2; k++) {
+                spectrogramCol[j] += fftRes[k] * fbank[j][k];
+            }
+
+            //log scale spectrogram
+            spectrogramCol[j] = 10*log10(spectrogramCol[j]);
+        }
+
+        //append col to spectrogram
+        spectrogram.push_back(spectrogramCol);
+    }
+
+    return spectrogram;
 }
 
 double Spectrogram::hzToMel(double f) {
@@ -18,10 +66,41 @@ double Spectrogram::melToHz(double mel) {
     return 700*(pow(10, mel/2595)-1);
 }
 
-void Spectrogram::hann(double data[], int winLen) {
+void Spectrogram::hann(std::vector<double>& data) {
+    int winLen = data.size();
+
     for (int i = 0; i < winLen; i++) {
         double multiplier = 0.5 * (1 - std::cos(2*(this->PI)*i/(winLen-1)));
         data[i] *= multiplier;
+    }
+}
+
+std::vector<double> Spectrogram::fftAbs(std::vector<double> r, std::vector<double> c) {
+    std::vector<double> res;
+
+    for(int i=0; i<r.size(); i++) 
+        res.push_back(r[i]*r[i]+c[i]*c[i]);
+
+    return res;
+}
+
+void Spectrogram::initFilterbank() {
+    for(int i=1; i<=this->nFFT; i++) {
+        std::vector<double> row;
+
+        for(int j=0; j<this->windowLen/2; j++) {
+            if(this->fftCenterBins[i-1] <= j && j < fftCenterBins[i]) {
+                double val = (j-fftCenterBins[i-1])*1.0/(fftCenterBins[i]-fftCenterBins[i-1]);
+                row.push_back(val);
+            } else if(fftCenterBins[i] <= j <= fftCenterBins[i+1]) {
+                double val = (fftCenterBins[i+1]-j)*1.0/(fftCenterBins[i+1]-fftCenterBins[i]);
+                row.push_back(val);
+            } else {
+                row.push_back(0);
+            }
+        }
+
+        this->fbank.push_back(row);
     }
 }
 

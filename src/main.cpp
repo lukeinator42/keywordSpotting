@@ -13,27 +13,32 @@ int main(int argc, char ** argv) {
 
     //cout << e.getMsg() << endl;
     
-    // if (argc != 2) {
-    //     printf("\nUsage :\n\n    <executable name>  <input file>\n") ;
-    //     exit(0);
-    // }
+    if (argc != 2) {
+        printf("\nUsage :\n\n    <executable name>  <input file>\n") ;
+        exit(0);
+    }
 
-    // string path(argv[1]);
+    string path(argv[1]);
 
     WavUtils wavUtils;
 
     Sound buffer;
 
-    Spectrogram spectrogram(10, 512);
+    Spectrogram spectrogram;
 
     // cout << buffer.size() << endl;
 
-    // wavUtils.readFile(path, buffer);
+    wavUtils.readFile(path, buffer);
 
     // cout << buffer.size() << endl;
 
+    vector< vector<double> > s = spectrogram.computeSpectrogram(buffer.getAudio());
 
-
+    for(int i=0; i<s.size(); i++) {
+        for(int j=0; j<s[i].size(); j++)
+            cout << s[i][j] << " ";
+        cout << endl;
+    }
     
     return 0;
 }

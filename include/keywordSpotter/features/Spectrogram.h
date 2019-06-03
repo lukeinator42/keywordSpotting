@@ -27,6 +27,7 @@ class Spectrogram {
     int sampleRate;
     const double PI = std::acos(-1.0);
     std::vector<int> fftCenterBins;
+    std::vector< std::vector<double> > fbank;
 
   public:
 
@@ -43,16 +44,15 @@ class Spectrogram {
 	 * =========================================================================== */
 	~Spectrogram();
 
+    std::vector< std::vector<double> > computeSpectrogram(std::vector<double> audio);
 
   private:
-    void hann(double data[], int winLen);
+    void hann(std::vector<double>& data);
     double hzToMel(double f);
     double melToHz(double mel);
     void initFFTCenterBins();
-
-    
-
-
+    void initFilterbank();
+    std::vector<double> fftAbs(std::vector<double> r, std::vector<double> c);
 
 };
 
