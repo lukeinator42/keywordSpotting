@@ -13,6 +13,7 @@
 #include <cstring>
 #include <time.h>
 #include <vector>
+#include <cmath>
 
 class Spectrogram {
 
@@ -23,15 +24,19 @@ class Spectrogram {
     double minFreq;
     double maxFreq;
     bool logScale;
-
+    int sampleRate;
+    const double PI = std::acos(-1.0);
+    std::vector<int> fftCenterBins;
 
   public:
 
 	/* ===========================================================================
 	 *  Default Constructor.
      */
-	Spectrogram(int nFFT=128, int windowLen=400, int hopSize=160, int minFreq=300.0, int maxFreq=8000.0, bool logScale=true);
+	Spectrogram(int nFFT=128, int windowLen=400, int hopSize=160, double minFreq=300.0, double maxFreq=8000.0, int sampleRate=16000, bool logScale=true);
 
+    
+    
 
     /* ===========================================================================
 	 *  Destructor.
@@ -40,6 +45,14 @@ class Spectrogram {
 
 
   private:
+    void hann(double data[], int winLen);
+    double hzToMel(double f);
+    double melToHz(double mel);
+    void initFFTCenterBins();
+
+    
+
+
 
 };
 
