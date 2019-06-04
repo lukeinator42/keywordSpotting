@@ -24,7 +24,15 @@ int main(int argc, char ** argv) {
 
     Sound buffer;
 
-    Spectrogram spectrogram;
+    int nFFT = 128;
+    int winLen = 400;
+    int hopSize = 160;
+    double minFreq = 50;
+    double maxFreq = 8000;
+    double sampleRate = 16000;
+    bool logScale = false;
+
+    Spectrogram spectrogram(nFFT, winLen, hopSize, minFreq, maxFreq, sampleRate, logScale);
 
     // cout << buffer.size() << endl;
 

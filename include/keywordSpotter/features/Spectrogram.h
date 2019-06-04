@@ -46,8 +46,11 @@ class Spectrogram {
 
     std::vector< std::vector<double> > computeSpectrogram(std::vector<double> audio);
 
+    std::vector< std::vector<double> > getFBank() { return fbank; }
+
   private:
     void hann(std::vector<double>& data);
+    void hamm(std::vector<double>& data);
     double hzToMel(double f);
     double melToHz(double mel);
     void initFFTCenterBins();

@@ -1,5 +1,6 @@
 #include <keywordSpotter/features/Spectrogram.h>
 #include <keywordSpotter/features/FftRealPair.h>
+#include <limits>
 
 Spectrogram::Spectrogram(int nFFT, int windowLen, int hopSize, double minFreq, double maxFreq, int sampleRate, bool logScale)
 : nFFT(nFFT), windowLen(windowLen), hopSize(hopSize), minFreq(minFreq), maxFreq(maxFreq), sampleRate(sampleRate), logScale(logScale) {
@@ -20,7 +21,7 @@ std::vector< std::vector<double> > Spectrogram::computeSpectrogram(std::vector<d
 
     for(int i=0; i<audio.size(); i += hopSize) {
         //get subsection of audio
-        std::vector<double> subvec(audio.begin()+i, audio.begin()+i+hopSize);
+        std::vector<double> subvec(audio.begin()+i, audio.begin()+i+windowLen);
 
         //hanning window section
         hann(subvec);
@@ -35,6 +36,10 @@ std::vector< std::vector<double> > Spectrogram::computeSpectrogram(std::vector<d
         //absolute val of fft
         std::vector<double> fftRes = fftAbs(subvec, comp);
 
+        //convert to power spectral estimate
+        for(int j=0; j<fftRes.size()/2; j++)
+            fftRes[j] = (1.0/(fftRes.size()/2))*fftRes[j]*fftRes[j];
+
         //create spectrogram col
         std::vector<double> spectrogramCol;
         spectrogramCol.resize(nFFT);
@@ -43,13 +48,21 @@ std::vector< std::vector<double> > Spectrogram::computeSpectrogram(std::vector<d
         for(int j=0; j<nFFT; j++) {
             spectrogramCol[j] = 0;
 
-            for(int k=0; k< windowLen/2; k++) {
-                spectrogramCol[j] += fftRes[k] * fbank[j][k];
+            for(int k=0; k < windowLen/2; k++) {
+                spectrogramCol[j] += fftRes[k] * fbank[j][k];     
             }
 
             //log scale spectrogram
-            spectrogramCol[j] = 10*log10(spectrogramCol[j]);
+            if(logScale) {
+                spectrogramCol[j] = 10.0*log10(std::max(1e-10, spectrogramCol[j]));
+                spectrogramCol[j] -= 10.0*log10(1.0);
+            }
         }
+
+        double log_min = spectrogramCol[0];
+
+        for(int j=0; j<nFFT; j++)
+            log_min = std::min(log_min, spectrogramCol[i]);
 
         //append col to spectrogram
         spectrogram.push_back(spectrogramCol);
@@ -75,11 +88,31 @@ void Spectrogram::hann(std::vector<double>& data) {
     }
 }
 
+void Spectrogram::hamm(std::vector<double>& data) {
+    int winLen = data.size();
+
+    double omega = 2.0 * PI / (winLen-1);
+
+    for (int i = 0; i < winLen; i++) {
+        double multiplier = (0.54 - 0.46 * cos(omega*(i-1)));
+        data[i] *= multiplier;
+    }
+}
+
 std::vector<double> Spectrogram::fftAbs(std::vector<double> r, std::vector<double> c) {
     std::vector<double> res;
 
-    for(int i=0; i<r.size(); i++) 
-        res.push_back(r[i]*r[i]+c[i]*c[i]);
+    for(int i=0; i<r.size(); i++) { 
+        // r[i] /= r.size();
+        // c[i] /= c.size();
+        
+        double val = r[i]*r[i]+c[i]*c[i];
+        
+        if(!logScale) 
+            val = sqrt(val);
+        
+        res.push_back(val);
+    }
 
     return res;
 }
@@ -92,9 +125,13 @@ void Spectrogram::initFilterbank() {
             if(this->fftCenterBins[i-1] <= j && j < fftCenterBins[i]) {
                 double val = (j-fftCenterBins[i-1])*1.0/(fftCenterBins[i]-fftCenterBins[i-1]);
                 row.push_back(val);
-            } else if(fftCenterBins[i] <= j <= fftCenterBins[i+1]) {
+
+            } else if(fftCenterBins[i] == j) {
+                row.push_back(1);
+            } else if(fftCenterBins[i] < j && j <= fftCenterBins[i+1]) {
                 double val = (fftCenterBins[i+1]-j)*1.0/(fftCenterBins[i+1]-fftCenterBins[i]);
                 row.push_back(val);
+
             } else {
                 row.push_back(0);
             }
@@ -114,6 +151,8 @@ void Spectrogram::initFFTCenterBins() {
         int bin = std::floor(((this->windowLen)+1)*freq/this->sampleRate);
         
         this->fftCenterBins.push_back(bin);
+        
     }
+
 }
 
