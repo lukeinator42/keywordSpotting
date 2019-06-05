@@ -41,14 +41,14 @@ int main(int argc, char ** argv) {
     Spectrogram spectrogram(nFFT, winLen, hopSize, minFreq, maxFreq, sampleRate, logScale);
 
     wavUtils.readFile(inpath, buffer);
-    vector< vector<double> > s = spectrogram.computeSpectrogram(buffer.getAudio());
+    SpectrogramResult s = spectrogram.computeSpectrogram(buffer.getAudio());
 
     EmbeddingNetwork network(graph_fn, checkpoint_fn);
 
+    Embedding res = network.getSpectrogramEmbedding(s);
+
     ofstream fout;
     fout.open(outpath);
-
-    Embedding res = network.getSpectrogramEmbedding(s);
 
     for(float el : res)
       fout << el << " ";
