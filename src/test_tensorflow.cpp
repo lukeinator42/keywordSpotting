@@ -55,12 +55,14 @@ int main(int argc, char ** argv) {
     const string graph_fn = "/home/ikubu/PycharmProjects/acoustic_embeddings/export/librispeech_lstm_embedding_model.meta";
     const string checkpoint_fn = "/home/ikubu/PycharmProjects/acoustic_embeddings/export/librispeech_lstm_embedding_model";
     
-    if (argc != 2) {
+    if (argc != 3) {
         printf("\nUsage :\n\n    <executable name>  <input file>\n") ;
         exit(0);
     }
 
     string inpath(argv[1]);
+
+    string outpath(argv[2]);
 
     WavUtils wavUtils;
 
@@ -103,6 +105,18 @@ int main(int argc, char ** argv) {
 
     cout << "input           " << data.DebugString() << std::endl;
     cout << "output          " << outputs[0].DebugString() << std::endl;
+
+    auto output_c = outputs[0].flat<float>();
+
+    ofstream fout;
+    fout.open(outpath);
+
+    for(int i=0; i<output_c.size(); i++)
+      fout << output_c.data()[i] << " ";
+
+    fout << endl;
+
+    fout.close();
 
     return 0;
 }
