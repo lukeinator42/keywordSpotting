@@ -13,11 +13,11 @@ Spectrogram::~Spectrogram() {
     
 }
 
-std::vector< std::vector<double> > Spectrogram::computeSpectrogram(std::vector<double> audio) {
+SpectrogramResult Spectrogram::computeSpectrogram(std::vector<double> audio) {
     while(audio.size() % windowLen != hopSize)
         audio.push_back(0);
 
-    std::vector< std::vector<double> > spectrogram;
+    SpectrogramResult sp;
 
     for(int i=0; i<audio.size(); i += hopSize) {
         //get subsection of audio
@@ -65,10 +65,10 @@ std::vector< std::vector<double> > Spectrogram::computeSpectrogram(std::vector<d
             log_min = std::min(log_min, spectrogramCol[i]);
 
         //append col to spectrogram
-        spectrogram.push_back(spectrogramCol);
+        sp.push_back(spectrogramCol);
     }
 
-    return spectrogram;
+    return sp;
 }
 
 double Spectrogram::hzToMel(double f) {

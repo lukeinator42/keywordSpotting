@@ -10,8 +10,6 @@ using namespace std;
 
 int main(int argc, char ** argv) {
 
-    EmbeddingNetwork e("Hello World!");
-
     //cout << e.getMsg() << endl;
     
     if (argc != 3) {
@@ -35,7 +33,7 @@ int main(int argc, char ** argv) {
     double sampleRate = 16000;
     bool logScale = true;
 
-    Spectrogram spectrogram(nFFT, winLen, hopSize, minFreq, maxFreq, sampleRate, logScale);
+    Spectrogram sp(nFFT, winLen, hopSize, minFreq, maxFreq, sampleRate, logScale);
 
     // cout << buffer.size() << endl;
 
@@ -43,7 +41,7 @@ int main(int argc, char ** argv) {
 
     // cout << buffer.size() << endl;
 
-    vector< vector<double> > s = spectrogram.computeSpectrogram(buffer.getAudio());
+    SpectrogramResult s = sp.computeSpectrogram(buffer.getAudio());
 
 
     ofstream fout;

@@ -15,6 +15,8 @@
 #include <vector>
 #include <cmath>
 
+typedef std::vector< std::vector<double> > SpectrogramResult; 
+
 class Spectrogram {
 
   private:
@@ -44,7 +46,7 @@ class Spectrogram {
 	 * =========================================================================== */
 	~Spectrogram();
 
-    std::vector< std::vector<double> > computeSpectrogram(std::vector<double> audio);
+    SpectrogramResult computeSpectrogram(std::vector<double> audio);
 
     std::vector< std::vector<double> > getFBank() { return fbank; }
 
