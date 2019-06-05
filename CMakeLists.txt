@@ -27,7 +27,7 @@ SET(folder_source
   ./src/EmbeddingNetwork.cpp
   ./src/features/Spectrogram.cpp
   ./src/features/FftRealPair.cpp
-  ./src/main.cpp
+  ./src/test_tensorflow.cpp
 )
 
 SET(folder_header 
