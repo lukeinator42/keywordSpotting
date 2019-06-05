@@ -1,4 +1,4 @@
-#include <keywordSpotter/sound/Sound.h>
+#include <keywordSpotter/lib/sound/Sound.h>
 
 Sound::Sound() {
 }

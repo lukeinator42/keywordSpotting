@@ -14,7 +14,7 @@
 #include <cstring>
 #include <time.h>
 #include <sndfile.h>
-#include <keywordSpotter/sound/Sound.h>
+#include <keywordSpotter/lib/sound/Sound.h>
 
 #define ARRAY_LEN(x)    ((int) (sizeof (x) / sizeof (x [0])))
 

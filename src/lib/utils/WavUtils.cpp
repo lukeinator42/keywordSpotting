@@ -1,4 +1,4 @@
-#include <keywordSpotter/utils/WavUtils.h>
+#include <keywordSpotter/lib/utils/WavUtils.h>
 
 WavUtils::WavUtils() {
 }

@@ -21,21 +21,27 @@ SET(PROJECT_INCLUDE_DIRS
 
 # Find .cpp and .h files automatically.  This is a bit lazy,
 # and in principle it would be better to list these files manually.
-SET(folder_source 
-  ./src/sound/Sound.cpp
-  ./src/utils/WavUtils.cpp
-  ./src/EmbeddingNetwork.cpp
-  ./src/features/Spectrogram.cpp
-  ./src/features/FftRealPair.cpp
+SET(lib_source 
+  ./src/lib/sound/Sound.cpp
+  ./src/lib/utils/WavUtils.cpp
+  ./src/lib/EmbeddingNetwork.cpp
+  ./src/lib/features/Spectrogram.cpp
+  ./src/lib/features/FftRealPair.cpp
   ./src/test_tensorflow.cpp
+  ./src/write_spectrogram.cpp
 )
 
-SET(folder_header 
-  ./include/keywordSpotter/EmbeddingNetwork.h
-  ./include/keywordSpotter/sound/Sound.h
-  ./include/keywordSpotter/utils/WavUtils.h
-  ./include/keywordSpotter/features/Spectrogram.h
-  ./include/keywordSpotter/features/FftRealPair.h
+SET(folder_source 
+  ./src/test_tensorflow.cpp
+  ./src/write_spectrogram.cpp
+)
+
+SET(lib_header 
+  ./include/keywordSpotter/lib/EmbeddingNetwork.h
+  ./include/keywordSpotter/lib/sound/Sound.h
+  ./include/keywordSpotter/lib/utils/WavUtils.h
+  ./include/keywordSpotter/lib/features/Spectrogram.h
+  ./include/keywordSpotter/lib/features/FftRealPair.h
 )
 
 MESSAGE("folder_header ${folder_header}")
@@ -48,10 +54,18 @@ SOURCE_GROUP("Header Files" FILES ${folder_header})
 INCLUDE_DIRECTORIES(${PROJECT_SOURCE_DIR}/include ${SNDFILE_INCLUDE_DIR} TensorFlow_DEP)
 
 # Create everything needed to build our library
-#ADD_LIBRARY(${PROJECTNAME} ${folder_source} ${folder_header})
-
-ADD_EXECUTABLE(${PROJECTNAME} ${folder_source} ${folder_header})
-
+ADD_LIBRARY(${PROJECTNAME} ${lib_source} ${lib_header})
 TARGET_LINK_LIBRARIES(${PROJECTNAME} ${SNDFILE_LIBRARY} TensorFlow_DEP)
+
+FOREACH( testsourcefile ${folder_source} )
+  string( REPLACE ".cpp" "" testname2 ${testsourcefile} )
+  string( REPLACE "./src/" "" testname ${testname2} )
+  
+  ADD_EXECUTABLE( ${testname} ${testsourcefile})
+  # Make sure YourLib is linked to each app
+  target_link_libraries( ${testname} ${PROJECTNAME} ${SNDFILE_LIBRARY} TensorFlow_DEP)
+endforeach( testsourcefile ${folder_source} )
+
+
 
 

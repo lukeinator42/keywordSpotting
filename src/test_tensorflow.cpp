@@ -1,17 +1,16 @@
 #include <iostream>
 #include <fstream>
 #include <string>
-#include <keywordSpotter/EmbeddingNetwork.h>
+#include <keywordSpotter/lib/EmbeddingNetwork.h>
 #include <sndfile.h>
-#include <keywordSpotter/utils/WavUtils.h>
-#include <keywordSpotter/sound/Sound.h>
-#include <keywordSpotter/features/Spectrogram.h>
+#include <keywordSpotter/lib/utils/WavUtils.h>
+#include <keywordSpotter/lib/sound/Sound.h>
+#include <keywordSpotter/lib/features/Spectrogram.h>
 #include <tensorflow/core/protobuf/meta_graph.pb.h>
 #include <tensorflow/core/public/session.h>
 #include <tensorflow/core/public/session_options.h>
 
 using namespace std;
-
 
 int main(int argc, char ** argv) {
     const string graph_fn = "/home/ikubu/PycharmProjects/acoustic_embeddings/export/librispeech_lstm_embedding_model.meta";
@@ -23,7 +22,6 @@ int main(int argc, char ** argv) {
     }
 
     string inpath(argv[1]);
-
     string outpath(argv[2]);
 
     WavUtils wavUtils;
@@ -46,6 +44,8 @@ int main(int argc, char ** argv) {
     EmbeddingNetwork network(graph_fn, checkpoint_fn);
 
     Embedding res = network.getSpectrogramEmbedding(s);
+
+
 
     ofstream fout;
     fout.open(outpath);

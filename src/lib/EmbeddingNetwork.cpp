@@ -5,7 +5,7 @@
  * @brief Neural network that returns embeddings for audio.
  * =========================================================================== */
 
-#include <keywordSpotter/EmbeddingNetwork.h>
+#include <keywordSpotter/lib/EmbeddingNetwork.h>
 
 EmbeddingNetwork::EmbeddingNetwork(std::string graph_fn, std::string checkpoint_fn) {
     

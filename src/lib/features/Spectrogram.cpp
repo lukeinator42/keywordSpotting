@@ -1,5 +1,5 @@
-#include <keywordSpotter/features/Spectrogram.h>
-#include <keywordSpotter/features/FftRealPair.h>
+#include <keywordSpotter/lib/features/Spectrogram.h>
+#include <keywordSpotter/lib/features/FftRealPair.h>
 #include <limits>
 
 Spectrogram::Spectrogram(int nFFT, int windowLen, int hopSize, double minFreq, double maxFreq, int sampleRate, bool logScale)

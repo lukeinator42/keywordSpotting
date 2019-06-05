@@ -1,10 +1,10 @@
 #include <iostream>
 #include <fstream>
-#include <keywordSpotter/EmbeddingNetwork.h>
+#include <keywordSpotter/lib/EmbeddingNetwork.h>
 #include <sndfile.h>
-#include <keywordSpotter/utils/WavUtils.h>
-#include <keywordSpotter/sound/Sound.h>
-#include <keywordSpotter/features/Spectrogram.h>
+#include <keywordSpotter/lib/utils/WavUtils.h>
+#include <keywordSpotter/lib/sound/Sound.h>
+#include <keywordSpotter/lib/features/Spectrogram.h>
 
 using namespace std;
 

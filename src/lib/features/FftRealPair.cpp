@@ -26,7 +26,7 @@
 #include <cstddef>
 #include <cstdint>
 #include <stdexcept>
-#include <keywordSpotter/features/FftRealPair.h>
+#include <keywordSpotter/lib/features/FftRealPair.h>
 
 using std::size_t;
 using std::vector;
