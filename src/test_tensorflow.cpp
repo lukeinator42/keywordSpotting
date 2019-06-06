@@ -45,8 +45,6 @@ int main(int argc, char ** argv) {
 
     Embedding res = network.getSpectrogramEmbedding(s);
 
-
-
     ofstream fout;
     fout.open(outpath);
 

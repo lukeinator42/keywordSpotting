@@ -37,8 +37,8 @@ SpectrogramResult Spectrogram::computeSpectrogram(std::vector<double> audio) {
         std::vector<double> fftRes = fftAbs(subvec, comp);
 
         //convert to power spectral estimate
-        for(int j=0; j<fftRes.size()/2; j++)
-            fftRes[j] = (1.0/(fftRes.size()/2))*fftRes[j]*fftRes[j];
+        // for(int j=0; j<fftRes.size()/2; j++)
+        //     fftRes[j] = (1.0/(fftRes.size()/2))*fftRes[j]*fftRes[j];
 
         //create spectrogram col
         std::vector<double> spectrogramCol;
@@ -54,15 +54,10 @@ SpectrogramResult Spectrogram::computeSpectrogram(std::vector<double> audio) {
 
             //log scale spectrogram
             if(logScale) {
-                spectrogramCol[j] = 10.0*log10(std::max(1e-10, spectrogramCol[j]));
+                spectrogramCol[j] = 10.0*log10(std::max(1e-5, spectrogramCol[j]));
                 spectrogramCol[j] -= 10.0*log10(1.0);
             }
         }
-
-        double log_min = spectrogramCol[0];
-
-        for(int j=0; j<nFFT; j++)
-            log_min = std::min(log_min, spectrogramCol[i]);
 
         //append col to spectrogram
         sp.push_back(spectrogramCol);
@@ -139,6 +134,23 @@ void Spectrogram::initFilterbank() {
 
         this->fbank.push_back(row);
     }
+
+    double minMel = hzToMel(this->minFreq);
+    double maxMel = hzToMel(this->maxFreq);
+    
+    for(int i=0; i<this->nFFT; i++) {
+        double mel1 = minMel + ((i+2)*1.0/(this->nFFT+1))*(maxMel-minMel);
+        double freq1 = melToHz(mel1);
+
+        double mel2 = minMel + ((i)*1.0/(this->nFFT+1))*(maxMel-minMel);
+        double freq2 = melToHz(mel2);
+        
+        double slaney = 2.0/(freq1-freq2);
+
+        for(int j=0; j<this->windowLen/2; j++) {
+            fbank[i][j] *= slaney;
+        }
+    }
 }
 
 void Spectrogram::initFFTCenterBins() {
@@ -146,9 +158,10 @@ void Spectrogram::initFFTCenterBins() {
     double maxMel = hzToMel(this->maxFreq);
 
     for(int i=0; i<this->nFFT+2; i++) {
-        double mel = minMel + (i*1.0/(this->nFFT+1))*(maxMel-minMel);
+        double mel = minMel + (i*1.0/(this->nFFT+2))*(maxMel-minMel);
         double freq = melToHz(mel);
-        int bin = std::floor(((this->windowLen)+1)*freq/this->sampleRate);
+
+        int bin = std::floor(((this->windowLen))*freq/this->sampleRate);
         
         this->fftCenterBins.push_back(bin);
         
