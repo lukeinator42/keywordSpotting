@@ -7,6 +7,7 @@
 
 #include <keywordSpotter/lib/EmbeddingNetwork.h>
 
+
 EmbeddingNetwork::EmbeddingNetwork(std::string graph_fn, std::string checkpoint_fn) {
     
     TF_CHECK_OK(tensorflow::NewSession(options, &sess));

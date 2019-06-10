@@ -5,6 +5,7 @@
 #include <keywordSpotter/lib/utils/WavUtils.h>
 #include <keywordSpotter/lib/sound/Sound.h>
 #include <keywordSpotter/lib/features/Spectrogram.h>
+#include <portaudio.h>
 
 using namespace std;
 
@@ -12,16 +13,13 @@ int main(int argc, char ** argv) {
 
     //cout << e.getMsg() << endl;
     
-    if (argc != 3) {
+    if (argc != 2) {
         printf("\nUsage :\n\n    <executable name>  <input file>\n") ;
         exit(0);
     }
 
-    string inpath(argv[1]);
+    string outpath(argv[1]);
 
-    string outpath(argv[2]);
-
-    WavUtils wavUtils;
 
     Sound buffer;
 
@@ -34,12 +32,6 @@ int main(int argc, char ** argv) {
     bool logScale = true;
 
     Spectrogram sp(nFFT, winLen, hopSize, minFreq, maxFreq, sampleRate, logScale);
-
-    // cout << buffer.size() << endl;
-
-    wavUtils.readFile(inpath, buffer);
-
-    // cout << buffer.size() << endl;
 
     SpectrogramResult s = sp.computeSpectrogram(buffer.getAudio());
 

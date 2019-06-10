@@ -9,6 +9,7 @@ Spectrogram::Spectrogram(int nFFT, int windowLen, int hopSize, double minFreq, d
     initFilterbank();
 }
 
+
 Spectrogram::~Spectrogram() {
     
 }

@@ -7,6 +7,7 @@ PROJECT(${PROJECTNAME})
 
 FIND_PACKAGE(SNDFILE REQUIRED)
 FIND_PACKAGE(TensorFlow REQUIRED)
+FIND_PACKAGE(Portaudio REQUIRED)
 
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -27,13 +28,15 @@ SET(lib_source
   ./src/lib/EmbeddingNetwork.cpp
   ./src/lib/features/Spectrogram.cpp
   ./src/lib/features/FftRealPair.cpp
-  ./src/test_tensorflow.cpp
-  ./src/write_spectrogram.cpp
+  ./src/lib/EmbeddingDatabase.cpp
 )
 
 SET(folder_source 
   ./src/test_tensorflow.cpp
   ./src/write_spectrogram.cpp
+  ./src/record_spectrogram.cpp
+  ./src/test_portaudio.cpp
+  ./src/test_embedding_database.cpp
 )
 
 SET(lib_header 
@@ -42,6 +45,7 @@ SET(lib_header
   ./include/keywordSpotter/lib/utils/WavUtils.h
   ./include/keywordSpotter/lib/features/Spectrogram.h
   ./include/keywordSpotter/lib/features/FftRealPair.h
+  ./include/keywordSpotter/lib/EmbeddingDatabase.h
 )
 
 MESSAGE("folder_header ${folder_header}")
@@ -51,19 +55,19 @@ SOURCE_GROUP("Source Files" FILES ${folder_source})
 SOURCE_GROUP("Header Files" FILES ${folder_header})
 
 # Add our include files into our compiler's search path.
-INCLUDE_DIRECTORIES(${PROJECT_SOURCE_DIR}/include ${SNDFILE_INCLUDE_DIR} TensorFlow_DEP)
+INCLUDE_DIRECTORIES(${PROJECT_SOURCE_DIR}/include ${SNDFILE_INCLUDE_DIR} ${PORTAUDIO_LIBRARIES} TensorFlow_DEP)
 
 # Create everything needed to build our library
 ADD_LIBRARY(${PROJECTNAME} ${lib_source} ${lib_header})
-TARGET_LINK_LIBRARIES(${PROJECTNAME} ${SNDFILE_LIBRARY} TensorFlow_DEP)
+TARGET_LINK_LIBRARIES(${PROJECTNAME} ${SNDFILE_LIBRARY} ${PORTAUDIO_LIBRARIES} TensorFlow_DEP)
 
 FOREACH( testsourcefile ${folder_source} )
   string( REPLACE ".cpp" "" testname2 ${testsourcefile} )
   string( REPLACE "./src/" "" testname ${testname2} )
-  
+
   ADD_EXECUTABLE( ${testname} ${testsourcefile})
   # Make sure YourLib is linked to each app
-  target_link_libraries( ${testname} ${PROJECTNAME} ${SNDFILE_LIBRARY} TensorFlow_DEP)
+  target_link_libraries( ${testname} ${PROJECTNAME} ${SNDFILE_LIBRARY} ${PORTAUDIO_LIBRARIES} TensorFlow_DEP)
 endforeach( testsourcefile ${folder_source} )
 
 
