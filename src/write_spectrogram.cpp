@@ -25,7 +25,7 @@ int main(int argc, char ** argv) {
 
     Sound buffer;
 
-    int nFFT = 40;
+    int nFFT = 128;
     int winLen = 400;
     int hopSize = 160;
     double minFreq = 0;
