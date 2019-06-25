@@ -10,8 +10,8 @@ using namespace std;
 
 int main(int argc, char ** argv) {
 
-    if (argc != 2) {
-        printf("\nUsage :\n\n    <executable name>  <input file>\n") ;
+    if (argc != 3) {
+        printf("\nUsage :\n\n    <executable name> <input folder> <input file>\n") ;
         exit(0);
     }
 
@@ -22,29 +22,25 @@ int main(int argc, char ** argv) {
 
     string path(argv[1]);
 
+    string wavPath(argv[2]);
+
     const string graph_fn = "/home/ikubu/PycharmProjects/acoustic_embeddings/export/librispeech_lstm_embedding_model.meta";
     const string checkpoint_fn = "/home/ikubu/PycharmProjects/acoustic_embeddings/export/librispeech_lstm_embedding_model";
     
 
     EmbeddingDatabase database(path, graph_fn, checkpoint_fn);
 
-    if(path[path.size()-1] != '/')
-        path += '/';
-    
-    if (dp != nullptr) {
-        while ((entry = readdir(dp))) {
-            string subfolder(entry->d_name);
+    cout << "audio: " << database.getEmbedding("audio").size() << endl;
+    cout << "robot: " << database.getEmbedding("robot").size() << endl;
+    cout << "intelligence: " << database.getEmbedding("intelligence").size() << endl;
 
-            if(subfolder[0] == '.')
-                continue;
+    Embedding test = database.getEmbeddingFromWav(wavPath);
 
-            cout << subfolder << ": ";
+    cout << "wav: " << test.size() << endl;
 
-            Embedding res = database.averageFolderEmbeddings(path+subfolder);
+    cout << endl;
 
-            cout << res.size() << endl;
-        }
-    }
+    database.testEmbedding(test);
     
     return 0;
 }

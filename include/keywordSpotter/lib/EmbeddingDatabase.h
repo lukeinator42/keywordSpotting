@@ -58,7 +58,11 @@ class EmbeddingDatabase {
 
 	float cosineDistance(Embedding a, Embedding b);
 
+	Embedding getEmbedding(std::string k) { return database[k]; }
 
+	void testEmbedding(Embedding a);
+
+	Embedding getEmbeddingFromWav(std::string wavPath);
 
     /* ===========================================================================
 	 *  Destructor.
@@ -67,6 +71,7 @@ class EmbeddingDatabase {
 
 
   private:
+	void initDB();
 
 };
 

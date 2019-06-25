@@ -11,6 +11,32 @@ EmbeddingDatabase::EmbeddingDatabase(std::string folderPath, std::string graph_f
     wavUtils = new WavUtils();
     spectrogram = new Spectrogram(nFFT, winLen, hopSize, minFreq, maxFreq, sampleRate, logScale);
     network = new EmbeddingNetwork(graph_fn, checkpoint_fn);
+
+    initDB();
+}
+
+void EmbeddingDatabase::initDB() {
+    if(folderPath[folderPath.size()-1] != '/')
+        folderPath += '/';
+
+    struct dirent *entry = nullptr;
+    DIR *dp = nullptr;
+
+    dp = opendir(folderPath.c_str());
+    
+    if (dp != nullptr) {
+        while ((entry = readdir(dp))) {
+            std::string subfolder(entry->d_name);
+
+            if(subfolder[0] == '.')
+                continue;
+
+
+            Embedding res = averageFolderEmbeddings(folderPath+subfolder);
+
+            database[subfolder] = res;
+        }
+    }
 }
 
 Embedding EmbeddingDatabase::averageFolderEmbeddings(std::string folderPath) {
@@ -47,6 +73,20 @@ Embedding EmbeddingDatabase::averageFolderEmbeddings(std::string folderPath) {
     return ret;
 }
 
+Embedding EmbeddingDatabase::getEmbeddingFromWav(std::string wavPath) {
+    Sound buffer;
+    wavUtils->readFile(wavPath, buffer);
+    SpectrogramResult s = spectrogram->computeSpectrogram(buffer.getAudio());
+    Embedding res = network->getSpectrogramEmbedding(s);
+
+    return res;
+}
+
+void EmbeddingDatabase::testEmbedding(Embedding a) {
+    for(auto el : database)
+        std::cout << el.first << ": " << cosineDistance(a, el.second) << std::endl;
+}
+
 Embedding EmbeddingDatabase::averageEmbeddings(Embedding a, Embedding b) {
     if(a.size() == 0)
         return b;
@@ -77,7 +117,25 @@ Embedding EmbeddingDatabase::averageEmbeddings(Embedding a, Embedding b) {
 }
 
 float EmbeddingDatabase::cosineDistance(Embedding a, Embedding b) {
-    
+    float dot=0, aMag=0, bMag=0;
+
+    while(a.size() > b.size())
+        a.erase(a.begin());
+
+    while(b.size() > a.size())
+        b.erase(b.begin());
+
+    for(int i=0; i<a.size(); i++) {
+        dot += a[i]*b[i];
+
+        aMag += a[i]*a[i];
+        bMag += b[i]*b[i];
+    }
+
+    aMag = sqrt(aMag);
+    bMag = sqrt(bMag);
+
+    return dot/(aMag * bMag);
 }
 
 EmbeddingDatabase::~EmbeddingDatabase() {
