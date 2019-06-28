@@ -164,18 +164,13 @@ void Spectrogram::applyPcen(SpectrogramResult& s) {
 
     double gain=0.98, bias=2, power=0.5, eps=1e-06;
 
-    for(int i=1; i<s.size(); i++) 
-        for(int j=0; j< s[0].size(); j++)
-            s[i][j] = std::max(1e-05, s[i][j]);
-
-
     SpectrogramResult m(s);
 
     SpectrogramResult smooth(m);
 
-    for(int i=1; i<m.size(); i++) {
-        for(int j=0; j< m[0].size(); j++) {
-            m[i][j] = (1-b)*m[i-1][j]+b*s[i][j];
+    for(int i=0; i<m.size(); i++) {
+        for(int j=1; j< m[0].size(); j++) {
+            m[i][j] = (1-b)*m[i][j-1]+b*s[i][j];
         }
     }
 
