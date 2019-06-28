@@ -1,9 +1,10 @@
 #include <keywordSpotter/lib/features/Spectrogram.h>
 #include <keywordSpotter/lib/features/FftRealPair.h>
 #include <limits>
+#include <cmath>
 
-Spectrogram::Spectrogram(int nFFT, int windowLen, int hopSize, double minFreq, double maxFreq, int sampleRate, bool logScale)
-: nFFT(nFFT), windowLen(windowLen), hopSize(hopSize), minFreq(minFreq), maxFreq(maxFreq), sampleRate(sampleRate), logScale(logScale) {
+Spectrogram::Spectrogram(int nFFT, int windowLen, int hopSize, double minFreq, double maxFreq, int sampleRate, bool logScale, bool pcen)
+: nFFT(nFFT), windowLen(windowLen), hopSize(hopSize), minFreq(minFreq), maxFreq(maxFreq), sampleRate(sampleRate), logScale(logScale), pcen(pcen) {
     
     initFFTCenterBins();
     initFilterbank();
@@ -63,6 +64,9 @@ SpectrogramResult Spectrogram::computeSpectrogram(std::vector<double> audio) {
         //append col to spectrogram
         sp.push_back(spectrogramCol);
     }
+
+    if(pcen)
+        applyPcen(sp);
 
     return sp;
 }
@@ -150,6 +154,40 @@ void Spectrogram::initFilterbank() {
 
         for(int j=0; j<this->windowLen/2; j++) {
             fbank[i][j] *= slaney;
+        }
+    }
+}
+
+void Spectrogram::applyPcen(SpectrogramResult& s) {
+    double T = 0.4 * sampleRate / hopSize;
+    double b = (sqrt(1 + 4* T*T) - 1) / (2 * T*T);
+
+    double gain=0.98, bias=2, power=0.5, eps=1e-06;
+
+    for(int i=1; i<s.size(); i++) 
+        for(int j=0; j< s[0].size(); j++)
+            s[i][j] = std::max(1e-05, s[i][j]);
+
+
+    SpectrogramResult m(s);
+
+    SpectrogramResult smooth(m);
+
+    for(int i=1; i<m.size(); i++) {
+        for(int j=0; j< m[0].size(); j++) {
+            m[i][j] = (1-b)*m[i-1][j]+b*s[i][j];
+        }
+    }
+
+       for(int i=1; i<m.size(); i++) {
+        for(int j=0; j< m[0].size(); j++) {
+            smooth[i][j] = exp(-gain * (log(eps) + log1p(m[i][j] / eps)));
+        }
+    }
+
+    for(int i=0; i< s.size(); i++) {
+        for(int j=0; j<s[0].size(); j++) {
+            s[i][j] = pow((s[i][j] * smooth[i][j] + bias), power) - pow(bias, power);
         }
     }
 }

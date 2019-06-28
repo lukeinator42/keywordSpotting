@@ -26,6 +26,7 @@ class Spectrogram {
     double minFreq;
     double maxFreq;
     bool logScale;
+    bool pcen;
     int sampleRate;
     const double PI = std::acos(-1.0);
     std::vector<int> fftCenterBins;
@@ -36,7 +37,7 @@ class Spectrogram {
 	/* ===========================================================================
 	 *  Default Constructor.
      */
-	Spectrogram(int nFFT=128, int windowLen=400, int hopSize=160, double minFreq=300.0, double maxFreq=8000.0, int sampleRate=16000, bool logScale=true);
+	Spectrogram(int nFFT=128, int windowLen=400, int hopSize=160, double minFreq=300.0, double maxFreq=8000.0, int sampleRate=16000, bool logScale=true, bool pcen=false);
 
     
     
@@ -57,6 +58,7 @@ class Spectrogram {
     double melToHz(double mel);
     void initFFTCenterBins();
     void initFilterbank();
+    void applyPcen(SpectrogramResult& s);
     std::vector<double> fftAbs(std::vector<double> r, std::vector<double> c);
 
 };

@@ -32,7 +32,7 @@ class EmbeddingDatabase {
 	std::map<std::string, Embedding> database;
 	WavUtils* wavUtils;
 
-    int nFFT = 128;
+    int nFFT = 40;
     int winLen = 400;
     int hopSize = 160;
     double minFreq = 50;

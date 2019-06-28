@@ -24,8 +24,8 @@ int main(int argc, char ** argv) {
 
     string wavPath(argv[2]);
 
-    const string graph_fn = "/home/ikubu/PycharmProjects/acoustic_embeddings/export/librispeech_lstm_embedding_model.meta";
-    const string checkpoint_fn = "/home/ikubu/PycharmProjects/acoustic_embeddings/export/librispeech_lstm_embedding_model";
+    const string graph_fn = "/home/ikubu/PycharmProjects/acoustic_embeddings/export/common_voice_lstm_embedding_model.meta";
+    const string checkpoint_fn = "/home/ikubu/PycharmProjects/acoustic_embeddings/export/common_voice_lstm_embedding_model";
     
 
     EmbeddingDatabase database(path, graph_fn, checkpoint_fn);

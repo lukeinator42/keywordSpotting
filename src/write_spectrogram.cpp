@@ -31,9 +31,10 @@ int main(int argc, char ** argv) {
     double minFreq = 0;
     double maxFreq = 8000;
     double sampleRate = 16000;
-    bool logScale = true;
+    bool logScale = false;
+    bool pcen = true;
 
-    Spectrogram sp(nFFT, winLen, hopSize, minFreq, maxFreq, sampleRate, logScale);
+    Spectrogram sp(nFFT, winLen, hopSize, minFreq, maxFreq, sampleRate, logScale, pcen);
 
     // cout << buffer.size() << endl;
 
