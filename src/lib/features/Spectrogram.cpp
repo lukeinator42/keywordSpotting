@@ -6,6 +6,9 @@
 Spectrogram::Spectrogram(int nFFT, int windowLen, int hopSize, double minFreq, double maxFreq, int sampleRate, bool logScale, bool pcen)
 : nFFT(nFFT), windowLen(windowLen), hopSize(hopSize), minFreq(minFreq), maxFreq(maxFreq), sampleRate(sampleRate), logScale(logScale), pcen(pcen) {
     
+    rplan = make_rfft_plan(windowLen);
+    cplan = make_cfft_plan(windowLen);
+
     initFFTCenterBins();
     initFilterbank();
 }
@@ -29,14 +32,27 @@ SpectrogramResult Spectrogram::computeSpectrogram(std::vector<double> audio) {
         hann(subvec);
 
         //create complex array
-        std::vector<double> comp;
-        comp.resize(subvec.size());
+
+        std::vector<double> combined;
+
+        for(double el : subvec) {
+            combined.push_back(el);
+            combined.push_back(el);
+        }
 
         //do fft
-        Fft::transform(subvec, comp);
+        cfft_forward(cplan, combined.data(), 1.);
+
+        std::vector<double> realComp;
+        std::vector<double> imagComp;
+
+        for(int i=0; i<combined.size(); i+=2) {
+            realComp.push_back(combined[i]);
+            imagComp.push_back(combined[i+1]);
+        }
 
         //absolute val of fft
-        std::vector<double> fftRes = fftAbs(subvec, comp);
+        std::vector<double> fftRes = fftAbs(realComp, imagComp);
 
         //convert to power spectral estimate
         // for(int j=0; j<fftRes.size()/2; j++)
@@ -160,7 +176,8 @@ void Spectrogram::initFilterbank() {
 
 void Spectrogram::applyPcen(SpectrogramResult& s) {
     double T = 0.4 * sampleRate / hopSize;
-    double b = (sqrt(1 + 4* T*T) - 1) / (2 * T*T);
+    // double b = (sqrt(1 + 4* T*T) - 1) / (2.0 * T*T);
+    double b = 0.025;
 
     double gain=0.98, bias=2, power=0.5, eps=1e-06;
 
@@ -168,13 +185,13 @@ void Spectrogram::applyPcen(SpectrogramResult& s) {
 
     SpectrogramResult smooth(m);
 
-    for(int i=0; i<m.size(); i++) {
-        for(int j=1; j< m[0].size(); j++) {
-            m[i][j] = (1-b)*m[i][j-1]+b*s[i][j];
+    for(int i=1; i<m.size(); i++) {
+        for(int j=0; j< m[0].size(); j++) {
+            m[i][j] = (1-b)*m[i-1][j]+b*s[i][j];
         }
     }
 
-       for(int i=1; i<m.size(); i++) {
+       for(int i=0; i<m.size(); i++) {
         for(int j=0; j< m[0].size(); j++) {
             smooth[i][j] = exp(-gain * (log(eps) + log1p(m[i][j] / eps)));
         }

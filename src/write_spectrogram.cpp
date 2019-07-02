@@ -6,6 +6,7 @@
 #include <keywordSpotter/lib/sound/Sound.h>
 #include <keywordSpotter/lib/features/Spectrogram.h>
 
+
 using namespace std;
 
 int main(int argc, char ** argv) {

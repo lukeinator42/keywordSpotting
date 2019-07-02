@@ -15,6 +15,10 @@
 #include <vector>
 #include <cmath>
 
+extern "C" {
+#include <keywordSpotter/lib/features/pocketfft.h>
+}
+
 typedef std::vector< std::vector<double> > SpectrogramResult; 
 
 class Spectrogram {
@@ -31,6 +35,8 @@ class Spectrogram {
     const double PI = std::acos(-1.0);
     std::vector<int> fftCenterBins;
     std::vector< std::vector<double> > fbank;
+    rfft_plan rplan;
+    cfft_plan cplan;
 
   public:
 

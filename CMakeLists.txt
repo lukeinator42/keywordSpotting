@@ -28,6 +28,7 @@ SET(lib_source
   ./src/lib/EmbeddingNetwork.cpp
   ./src/lib/features/Spectrogram.cpp
   ./src/lib/features/FftRealPair.cpp
+  ./src/lib/features/pocketfft.c
   ./src/lib/EmbeddingDatabase.cpp
 )
 
@@ -45,6 +46,7 @@ SET(lib_header
   ./include/keywordSpotter/lib/utils/WavUtils.h
   ./include/keywordSpotter/lib/features/Spectrogram.h
   ./include/keywordSpotter/lib/features/FftRealPair.h
+  ./include/keywordSpotter/lib/features/pocketfft.h
   ./include/keywordSpotter/lib/EmbeddingDatabase.h
 )
 
