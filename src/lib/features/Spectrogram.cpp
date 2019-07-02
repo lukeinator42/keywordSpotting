@@ -37,7 +37,7 @@ SpectrogramResult Spectrogram::computeSpectrogram(std::vector<double> audio) {
 
         for(double el : subvec) {
             combined.push_back(el);
-            combined.push_back(el);
+            combined.push_back(0);
         }
 
         //do fft
