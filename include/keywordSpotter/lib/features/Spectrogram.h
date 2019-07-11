@@ -33,7 +33,6 @@ class Spectrogram {
     bool pcen;
     int sampleRate;
     const double PI = std::acos(-1.0);
-    std::vector<int> fftCenterBins;
     std::vector< std::vector<double> > fbank;
     rfft_plan rplan;
     cfft_plan cplan;
@@ -62,7 +61,6 @@ class Spectrogram {
     void hamm(std::vector<double>& data);
     double hzToMel(double f);
     double melToHz(double mel);
-    void initFFTCenterBins();
     void initFilterbank();
     void applyPcen(SpectrogramResult& s);
     std::vector<double> fftAbs(std::vector<double> r, std::vector<double> c);

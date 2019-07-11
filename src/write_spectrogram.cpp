@@ -32,8 +32,8 @@ int main(int argc, char ** argv) {
     double minFreq = 0;
     double maxFreq = 8000;
     double sampleRate = 16000;
-    bool logScale = false;
-    bool pcen = true;
+    bool logScale = true;
+    bool pcen = false;
 
     Spectrogram sp(nFFT, winLen, hopSize, minFreq, maxFreq, sampleRate, logScale, pcen);
 
