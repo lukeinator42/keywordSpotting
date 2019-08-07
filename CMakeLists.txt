@@ -36,6 +36,7 @@ SET(folder_source
   ./src/test_tensorflow.cpp
   ./src/write_spectrogram.cpp
   ./src/record_spectrogram.cpp
+  ./src/stream_portaudio.cpp
   ./src/test_portaudio.cpp
   ./src/test_embedding_database.cpp
 )

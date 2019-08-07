@@ -11,9 +11,9 @@ void WavUtils::readFile(std::string path, Sound& sound_buffer) {
         exit (1) ;
     } 
 
-    double raw_buffer[1024];
+    float raw_buffer[1024];
 
-    while ((count = sf_read_double (infile, raw_buffer, ARRAY_LEN (raw_buffer))) > 0) {
+    while ((count = sf_read_float (infile, raw_buffer, ARRAY_LEN (raw_buffer))) > 0) {
         
         sound_buffer.appendAudio(raw_buffer, 1024);
     }

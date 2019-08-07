@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <portaudio.h>
+#include "portaudio.h"
 
 /* #define SAMPLE_RATE  (17932) // Test failure to open with this value. */
 #define SAMPLE_RATE  (16000)
@@ -9,7 +9,8 @@
 #define NUM_CHANNELS    (2)
 /* #define DITHER_FLAG     (paDitherOff) */
 #define DITHER_FLAG     (0) /**/
-
+/** Set to 1 if you want to capture the recording to a file. */
+#define WRITE_TO_FILE   (0)
 
 /* Select sample format. */
 #if 1
@@ -148,8 +149,9 @@ static int playCallback( const void *inputBuffer, void *outputBuffer,
 }
 
 /*******************************************************************/
-
-int main(void) {
+int main(void);
+int main(void)
+{
     PaStreamParameters  inputParameters,
                         outputParameters;
     PaStream*           stream;
@@ -234,6 +236,24 @@ int main(void) {
     printf("sample max amplitude = "PRINTF_S_FORMAT"\n", max );
     printf("sample average = %lf\n", average );
 
+    /* Write recorded data to a file. */
+#if WRITE_TO_FILE
+    {
+        FILE  *fid;
+        fid = fopen("recorded.raw", "wb");
+        if( fid == NULL )
+        {
+            printf("Could not open file.");
+        }
+        else
+        {
+            fwrite( data.recordedSamples, NUM_CHANNELS * sizeof(SAMPLE), totalFrames, fid );
+            fclose( fid );
+            printf("Wrote data to 'recorded.raw'\n");
+        }
+    }
+#endif
+
     /* Playback recorded data.  -------------------------------------------- */
     data.frameIndex = 0;
 
@@ -288,4 +308,3 @@ done:
     }
     return err;
 }
-

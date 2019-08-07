@@ -40,7 +40,7 @@ class EmbeddingNetwork {
 	 * =========================================================================== */
 	EmbeddingNetwork(const std::string graph_fn, const std::string checkpoint_fn);
 
-	Embedding getSpectrogramEmbedding(std::vector< std::vector<double> > s);
+	Embedding getSpectrogramEmbedding( std::vector<float> s);
 
 
 	/* ===========================================================================

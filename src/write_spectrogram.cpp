@@ -1,6 +1,5 @@
 #include <iostream>
 #include <fstream>
-#include <keywordSpotter/lib/EmbeddingNetwork.h>
 #include <sndfile.h>
 #include <keywordSpotter/lib/utils/WavUtils.h>
 #include <keywordSpotter/lib/sound/Sound.h>
@@ -10,7 +9,6 @@
 using namespace std;
 
 int main(int argc, char ** argv) {
-
     //cout << e.getMsg() << endl;
     
     if (argc != 3) {
@@ -26,7 +24,7 @@ int main(int argc, char ** argv) {
 
     Sound buffer;
 
-    int nFFT = 128;
+    int nFFT = 40;
     int winLen = 400;
     int hopSize = 160;
     double minFreq = 0;
@@ -43,19 +41,18 @@ int main(int argc, char ** argv) {
 
     // cout << buffer.size() << endl;
 
-    SpectrogramResult s = sp.computeSpectrogram(buffer.getAudio());
+    //SpectrogramResult s = sp.computeSpectrogram(buffer.getAudio());
 
+    // ofstream fout;
+    // fout.open(outpath);
 
-    ofstream fout;
-    fout.open(outpath);
+    // for(int i=0; i<s.size(); i++) {
+    //     for(int j=0; j<s[i].size(); j++)
+    //         fout << s[i][j] << " ";
+    //     fout << endl;
+    // }
 
-    for(int i=0; i<s.size(); i++) {
-        for(int j=0; j<s[i].size(); j++)
-            fout << s[i][j] << " ";
-        fout << endl;
-    }
-
-    fout.close();
+    // fout.close();
     
     return 0;
 }

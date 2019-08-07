@@ -61,8 +61,8 @@ Embedding EmbeddingDatabase::averageFolderEmbeddings(std::string folderPath) {
                 Sound buffer;
 
                 wavUtils->readFile(filepath, buffer);
-                SpectrogramResult s = spectrogram->computeSpectrogram(buffer.getAudio());
-                Embedding res = network->getSpectrogramEmbedding(s);
+                
+                Embedding res = network->getSpectrogramEmbedding(buffer.getAudio());
 
                 ret = averageEmbeddings(ret, res);
         }
@@ -76,8 +76,8 @@ Embedding EmbeddingDatabase::averageFolderEmbeddings(std::string folderPath) {
 Embedding EmbeddingDatabase::getEmbeddingFromWav(std::string wavPath) {
     Sound buffer;
     wavUtils->readFile(wavPath, buffer);
-    SpectrogramResult s = spectrogram->computeSpectrogram(buffer.getAudio());
-    Embedding res = network->getSpectrogramEmbedding(s);
+   
+    Embedding res = network->getSpectrogramEmbedding(buffer.getAudio());
 
     return res;
 }

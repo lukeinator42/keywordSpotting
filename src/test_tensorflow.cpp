@@ -13,8 +13,8 @@
 using namespace std;
 
 int main(int argc, char ** argv) {
-    const string graph_fn = "/home/ikubu/PycharmProjects/acoustic_embeddings/export/librispeech_lstm_embedding_model.meta";
-    const string checkpoint_fn = "/home/ikubu/PycharmProjects/acoustic_embeddings/export/librispeech_lstm_embedding_model";
+    const string graph_fn = "/home/ikubu/PycharmProjects/acoustic_embeddings/export/speech_commands_audio_lstm_embedding_model.meta";
+    const string checkpoint_fn = "/home/ikubu/PycharmProjects/acoustic_embeddings/export/speech_commands_audio_lstm_embedding_model";
     
     if (argc != 3) {
         printf("\nUsage :\n\n    <executable name>  <input file>\n") ;
@@ -39,11 +39,10 @@ int main(int argc, char ** argv) {
     Spectrogram spectrogram(nFFT, winLen, hopSize, minFreq, maxFreq, sampleRate, logScale);
 
     wavUtils.readFile(inpath, buffer);
-    SpectrogramResult s = spectrogram.computeSpectrogram(buffer.getAudio());
 
     EmbeddingNetwork network(graph_fn, checkpoint_fn);
 
-    Embedding res = network.getSpectrogramEmbedding(s);
+    Embedding res = network.getSpectrogramEmbedding(buffer.getAudio());
 
     ofstream fout;
     fout.open(outpath);

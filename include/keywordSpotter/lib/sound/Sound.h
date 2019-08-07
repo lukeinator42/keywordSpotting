@@ -21,7 +21,7 @@ class Sound {
 	/* ===========================================================================
 	 *  Variables received from the constructor.
 	 * =========================================================================== */
-    std::vector<double> buffer;
+    std::vector<float> buffer;
     int samplingRate;
 
   public:
@@ -31,19 +31,19 @@ class Sound {
 	 * =========================================================================== */
 		Sound();
 
-    void appendAudio(double audio[], int len);
+    void appendAudio(float audio[], int len);
 
 
 	/* ===========================================================================
 	 *  Returns sample at index.
 	 * =========================================================================== */
-    double getSample(int index) { return buffer[index]; }
+    float getSample(int index) { return buffer[index]; }
 
     void setSamplingRate(int sr) { samplingRate = sr; }
 
     int getSamplingRate() { return samplingRate; }
 
-		std::vector<double> getAudio() { return buffer; }
+		std::vector<float> getAudio() { return buffer; }
 
 	/* ===========================================================================
 	 *  Returns size of sound object.

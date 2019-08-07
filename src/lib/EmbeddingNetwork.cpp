@@ -58,18 +58,18 @@ std::string EmbeddingNetwork::getMsg() {
     return this->msg;
 }
 
-Embedding EmbeddingNetwork::getSpectrogramEmbedding(std::vector< std::vector<double> > s) {
-    tensorflow::TensorShape data_shape({1, (long long) s.size(), (long long) s[0].size()});
+Embedding EmbeddingNetwork::getSpectrogramEmbedding(std::vector<float> s) {
+    tensorflow::TensorShape data_shape({1,(long long) s.size()});
     tensorflow::Tensor data(tensorflow::DT_FLOAT, data_shape);
     
-    auto data_ = data.tensor<float, 3>();
+    auto data_ = data.tensor<float, 2>();
 
+    
     for(int i=0; i<s.size(); i++)
-        for(int j=0; j<s[i].size(); j++)
-            data_(0, i, j) = s[i][j];
+        data_(0, i) = s[i];
 
     tensor_dict feed_dict = {
-        {"input_1:0", data},
+        {"input_2:0", data},
     };
 
     std::vector<tensorflow::Tensor> outputs;
